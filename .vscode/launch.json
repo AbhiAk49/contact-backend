@@ -1,0 +1,17 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "pwa-node",
+      "request": "launch",
+      "name": "Launch App Server via yarn",
+      "runtimeExecutable": "yarn",
+      "cwd": "${workspaceFolder}",
+      "runtimeArgs": ["dev"],
+      "port": 3000,
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+    }
+  ]
+}
