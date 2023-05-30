@@ -34,6 +34,17 @@ const updateContact = {
     .min(1),
 };
 
+const updateContactStar = {
+  params: Joi.object().keys({
+    contactId: Joi.required().custom(objectId),
+  }),
+  body: Joi.object()
+    .keys({
+      starred: Joi.bool().default(false),
+    })
+    .min(1),
+};
+
 const deleteContact = {
   params: Joi.object().keys({
     contactId: Joi.string().custom(objectId),
@@ -46,4 +57,5 @@ module.exports = {
   getContact,
   updateContact,
   deleteContact,
+  updateContactStar,
 };

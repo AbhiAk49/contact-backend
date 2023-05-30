@@ -17,4 +17,8 @@ router
   .patch(auth(), validate(contactValidation.updateContact), contactController.updateContact)
   .delete(auth(), validate(contactValidation.deleteContact), contactController.deleteContact);
 
+router
+  .route('/:contactId/star')
+  .patch(auth(), validate(contactValidation.updateContactStar), contactController.updateContactStar);
+
 module.exports = router;

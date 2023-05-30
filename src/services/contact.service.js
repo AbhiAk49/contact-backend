@@ -82,6 +82,23 @@ const deleteContactById = async (contactId, userId) => {
   return contact;
 };
 
+/**
+ * Update Star contact by id
+ * @param {ObjectId} contactId
+ * @param {ObjectId} userId
+ * @param {Boolean} starred
+ * @returns {Promise<Contact>}
+ */
+const updateStarContactById = async (contactId, userId, starred = false) => {
+  const contact = await getContactById(contactId, userId);
+  if (!contact) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'User not found');
+  }
+  contact.starred = starred;
+  await contact.save();
+  return contact;
+};
+
 module.exports = {
   createContact,
   queryContacts,
@@ -89,4 +106,5 @@ module.exports = {
   getAllContactsForUser,
   updateContactById,
   deleteContactById,
+  updateStarContactById,
 };

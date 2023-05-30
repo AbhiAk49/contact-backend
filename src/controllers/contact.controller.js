@@ -44,6 +44,12 @@ const deleteContact = catchAsync(async (req, res) => {
   res.send(contact);
 });
 
+const updateContactStar = catchAsync(async (req, res) => {
+  const { starred } = req.body;
+  const contact = await contactService.updateStarContactById(req.params.contactId, req.user._id, starred);
+  res.send(contact);
+});
+
 module.exports = {
   createContact,
   getContacts,
@@ -51,4 +57,5 @@ module.exports = {
   getContact,
   updateContact,
   deleteContact,
+  updateContactStar,
 };
