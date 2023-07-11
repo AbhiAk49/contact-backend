@@ -3,7 +3,8 @@ const helmet = require('helmet');
 const xss = require('xss-clean');
 const mongoSanitize = require('express-mongo-sanitize');
 const compression = require('compression');
-const cors = require('cors');
+//const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const httpStatus = require('http-status');
 const config = require('./config/config');
@@ -13,6 +14,7 @@ const { authLimiter } = require('./middlewares/rateLimiter');
 const routes = require('./routes/v1');
 const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
+const cors = require('./middlewares/cors');
 
 const app = express();
 
@@ -20,6 +22,8 @@ if (config.env !== 'test') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);
 }
+
+app.use(cookieParser());
 
 // set security HTTP headers
 app.use(helmet());
@@ -38,8 +42,8 @@ app.use(mongoSanitize());
 app.use(compression());
 
 // enable cors
-app.use(cors());
-app.options('*', cors());
+app.use(cors);
+//app.options('*', cors());
 
 // jwt authentication
 app.use(passport.initialize());

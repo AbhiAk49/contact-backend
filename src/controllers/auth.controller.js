@@ -1,10 +1,21 @@
 const httpStatus = require('http-status');
 const catchAsync = require('../utils/catchAsync');
 const { authService, userService, tokenService, emailService } = require('../services');
+const { AUTH_COOKIE, AUTH_COOKIE_REFRESH } = require('../config/constant');
 
 const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
   const tokens = await tokenService.generateAuthTokens(user);
+  res.cookie(AUTH_COOKIE, tokens.access.token, {
+    //domain: `.${config.domain}`,
+    expires: tokens.access.expires,
+    httpOnly: true,
+  });
+  res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, {
+    //domain: `.${config.domain}`,
+    expires: tokens.refresh.expires,
+    httpOnly: true,
+  });
   res.status(httpStatus.CREATED).send({ user, tokens });
 });
 
@@ -12,11 +23,31 @@ const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
   const user = await authService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
+  res.cookie(AUTH_COOKIE, tokens.access.token, {
+    //domain: `.${config.domain}`,
+    expires: tokens.access.expires,
+    httpOnly: true,
+  });
+  res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, {
+    //domain: `.${config.domain}`,
+    expires: tokens.refresh.expires,
+    httpOnly: true,
+  });
+
   res.send({ user, tokens });
 });
 
 const logout = catchAsync(async (req, res) => {
-  await authService.logout(req.body.refreshToken);
+  const refreshToken = req?.cookies[AUTH_COOKIE_REFRESH] || req.body.refreshToken;
+  await authService.logout(refreshToken);
+  res.clearCookie(AUTH_COOKIE, {
+    //domain: `.${config.domain}`,
+    httpOnly: true,
+  });
+  res.clearCookie(AUTH_COOKIE_REFRESH, {
+    //domain: `.${config.domain}`,
+    httpOnly: true,
+  });
   res.status(httpStatus.NO_CONTENT).send();
 });
 
