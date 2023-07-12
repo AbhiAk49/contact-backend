@@ -14,7 +14,7 @@ const register = catchAsync(async (req, res) => {
 
     //need for chrome specific
     secure: config === 'production',
-    sameSite: config === 'production' ? 'none': 'lax'
+    sameSite: config === 'production' ? 'None': 'Lax'
   });
   res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, {
     //domain: `.${config.domain}`,
@@ -22,7 +22,7 @@ const register = catchAsync(async (req, res) => {
     httpOnly: true,
 
     secure: config === 'production',
-    sameSite: config === 'production' ? 'none': 'lax'
+    sameSite: config === 'production' ? 'None': 'Lax'
   });
   res.status(httpStatus.CREATED).send({ user, tokens });
 });
@@ -37,7 +37,7 @@ const login = catchAsync(async (req, res) => {
     httpOnly: true,
 
     secure: config === 'production',
-    sameSite: config === 'production' ? 'none': 'lax'
+    sameSite: config === 'production' ? 'None': 'Lax'
   });
   res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, {
     //domain: `.${config.domain}`,
@@ -45,7 +45,7 @@ const login = catchAsync(async (req, res) => {
     httpOnly: true,
 
     secure: config === 'production',
-    sameSite: config === 'production' ? 'none': 'lax'
+    sameSite: config === 'production' ? 'None': 'Lax'
   });
 
   res.send({ user, tokens });
@@ -58,13 +58,13 @@ const logout = catchAsync(async (req, res) => {
     //domain: `.${config.domain}`,
     httpOnly: true,
     secure: config === 'production',
-    sameSite: config === 'production' ? 'none': 'lax'
+    sameSite: config === 'production' ? 'None': 'Lax'
   });
   res.clearCookie(AUTH_COOKIE_REFRESH, {
     //domain: `.${config.domain}`,
     httpOnly: true,
     secure: config === 'production',
-    sameSite: config === 'production' ? 'none': 'lax'
+    sameSite: config === 'production' ? 'None': 'Lax'
   });
   res.status(httpStatus.NO_CONTENT).send();
 });
