@@ -8,14 +8,21 @@ const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
   const tokens = await tokenService.generateAuthTokens(user);
   res.cookie(AUTH_COOKIE, tokens.access.token, {
-    //domain: `.${config.domain}`,
+    //domain: `.${config.domain}`,  //commented for public subdomain exceptions like netlify
     expires: tokens.access.expires,
     httpOnly: true,
+
+    //need for chrome specific
+    secure: config === 'production',
+    sameSite: config === 'production' ? 'none': 'lax'
   });
   res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, {
     //domain: `.${config.domain}`,
     expires: tokens.refresh.expires,
     httpOnly: true,
+
+    secure: config === 'production',
+    sameSite: config === 'production' ? 'none': 'lax'
   });
   res.status(httpStatus.CREATED).send({ user, tokens });
 });
@@ -28,11 +35,17 @@ const login = catchAsync(async (req, res) => {
     //domain: `.${config.domain}`,
     expires: tokens.access.expires,
     httpOnly: true,
+
+    secure: config === 'production',
+    sameSite: config === 'production' ? 'none': 'lax'
   });
   res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, {
     //domain: `.${config.domain}`,
     expires: tokens.refresh.expires,
     httpOnly: true,
+
+    secure: config === 'production',
+    sameSite: config === 'production' ? 'none': 'lax'
   });
 
   res.send({ user, tokens });
@@ -44,10 +57,14 @@ const logout = catchAsync(async (req, res) => {
   res.clearCookie(AUTH_COOKIE, {
     //domain: `.${config.domain}`,
     httpOnly: true,
+    secure: config === 'production',
+    sameSite: config === 'production' ? 'none': 'lax'
   });
   res.clearCookie(AUTH_COOKIE_REFRESH, {
     //domain: `.${config.domain}`,
     httpOnly: true,
+    secure: config === 'production',
+    sameSite: config === 'production' ? 'none': 'lax'
   });
   res.status(httpStatus.NO_CONTENT).send();
 });
