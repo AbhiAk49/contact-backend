@@ -2,14 +2,16 @@ const cors = require('cors');
 const config = require('../config/config');
 // cors
 const whitelist = [
-  // /\.frolicx0\.de(:[0-9]+)?$/,
-  // /\.frolicz0\.de(:[0-9]+)?$/,
-  // /\.frolicz5\.de(:[0-9]+)?$/,
-  /localhost/ // For local dev
-/**
- * white listing domains here
- */
+  /manage-my-contact-service/,
+  /manage-my-contacts/,
+  /**
+   * white listing domains here
+   */
 ];
+
+if (config.env === 'development') {
+  whitelist.push(/localhost/); // for local
+}
 const allowedHeaders = ['content-type', 'authorization'];
 
 function corsAllowedDomain(req, callback) {
