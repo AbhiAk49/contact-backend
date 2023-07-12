@@ -17,6 +17,7 @@ const allowedHeaders = ['content-type', 'authorization'];
 
 function corsAllowedDomain(req, callback) {
   let reqOrigin = req.get('origin');
+  console.log(`reqOrigin for ${req.originalUrl} ,`, reqOrigin);
   let corsOptions = {
     origin: false,
     maxAge: 86400,
@@ -39,6 +40,7 @@ function corsAllowedDomain(req, callback) {
   if (!reqOrigin || whitelist.map((r) => r.test(reqOrigin)).includes(true)) {
     corsOptions.origin = true;
   }
+  console.log(`corsOptions for ${req.originalUrl} ,`, corsOptions);
   callback(null, corsOptions);
 }
 
