@@ -16,6 +16,9 @@ const { errorConverter, errorHandler } = require('./middlewares/error');
 const ApiError = require('./utils/ApiError');
 const cors = require('./middlewares/cors');
 
+console.log('--------- debug config --------')
+console.log(config)
+console.log('--------- debug --------')
 const app = express();
 
 if (config.env !== 'test') {
