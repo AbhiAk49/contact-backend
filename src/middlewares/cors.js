@@ -25,9 +25,9 @@ function corsAllowedDomain(req, callback) {
     credentials: true,
   };
 
-  if (config.env === 'development') {
-    corsOptions['credentials'] = true;
-  }
+  // if (config.env === 'development') {
+  //   corsOptions['credentials'] = true;
+  // }
   try {
     if (reqOrigin && reqOrigin.indexOf('http') == -1) {
       reqOrigin = `http://${reqOrigin}`;

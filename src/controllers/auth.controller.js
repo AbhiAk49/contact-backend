@@ -8,12 +8,12 @@ const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
   const tokens = await tokenService.generateAuthTokens(user);
   res.cookie(AUTH_COOKIE, tokens.access.token, {
-    domain: `.${config.domain}`,
+    //domain: `.${config.domain}`,
     expires: tokens.access.expires,
     httpOnly: true,
   });
   res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, {
-    domain: `.${config.domain}`,
+    //domain: `.${config.domain}`,
     expires: tokens.refresh.expires,
     httpOnly: true,
   });
@@ -25,12 +25,12 @@ const login = catchAsync(async (req, res) => {
   const user = await authService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
   res.cookie(AUTH_COOKIE, tokens.access.token, {
-    domain: `.${config.domain}`,
+    //domain: `.${config.domain}`,
     expires: tokens.access.expires,
     httpOnly: true,
   });
   res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, {
-    domain: `.${config.domain}`,
+    //domain: `.${config.domain}`,
     expires: tokens.refresh.expires,
     httpOnly: true,
   });
@@ -42,11 +42,11 @@ const logout = catchAsync(async (req, res) => {
   const refreshToken = req?.cookies[AUTH_COOKIE_REFRESH] || req.body.refreshToken;
   await authService.logout(refreshToken);
   res.clearCookie(AUTH_COOKIE, {
-    domain: `.${config.domain}`,
+    //domain: `.${config.domain}`,
     httpOnly: true,
   });
   res.clearCookie(AUTH_COOKIE_REFRESH, {
-    domain: `.${config.domain}`,
+    //domain: `.${config.domain}`,
     httpOnly: true,
   });
   res.status(httpStatus.NO_CONTENT).send();
