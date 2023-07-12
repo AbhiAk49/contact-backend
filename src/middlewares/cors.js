@@ -4,6 +4,7 @@ const config = require('../config/config');
 const whitelist = [
   /manage-my-contact-service/,
   /manage-my-contacts/,
+  /localhost/,
   /**
    * white listing domains here
    */
@@ -20,6 +21,7 @@ function corsAllowedDomain(req, callback) {
     origin: false,
     maxAge: 86400,
     allowedHeaders,
+    credentials: true,
   };
 
   if (config.env === 'development') {
