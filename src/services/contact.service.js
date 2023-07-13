@@ -43,7 +43,7 @@ const getAllContactsForUser = async (userId, starredOnly = false) => {
   if (starredOnly) {
     $match['starred'] = true;
   }
-  const contacts = await Contact.find($match);
+  const contacts = await Contact.find($match).sort({ starred: -1 });
   return contacts;
 };
 
