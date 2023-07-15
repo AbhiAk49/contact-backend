@@ -79,6 +79,31 @@ const deleteUserById = async (userId) => {
   return user;
 };
 
+/**
+ * The function finds a user by email and updates their information, or creates a new user if the email
+ * is not found.
+ * @returns the updated user object.
+ */
+const findAndUpdateUserByEmail = async ({ email, name, password, isEmailVerified, role }) => {
+  const user = await User.findOneAndUpdate(
+    {
+      email,
+    },
+    {
+      email,
+      name,
+      password,
+      isEmailVerified,
+      role,
+    },
+    {
+      upsert: true,
+      new: true,
+    }
+  );
+  return user;
+};
+
 module.exports = {
   createUser,
   queryUsers,
@@ -86,4 +111,5 @@ module.exports = {
   getUserByEmail,
   updateUserById,
   deleteUserById,
+  findAndUpdateUserByEmail,
 };

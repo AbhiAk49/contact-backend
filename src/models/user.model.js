@@ -82,6 +82,13 @@ userSchema.pre('save', async function (next) {
   }
   next();
 });
+userSchema.pre('findOneAndUpdate', async function (next) {
+  const user = this;
+  if (user._update.password) {
+    user._update.password = await bcrypt.hash(user._update.password, 8);
+  }
+  next();
+});
 userSchema.index({ email: 1, unique: true });
 userSchema.index({ email: 1, _id: 1 });
 /**
