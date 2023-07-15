@@ -18,7 +18,7 @@ const cors = require('./middlewares/cors');
 
 const app = express();
 
-if (config.env !== 'test') {
+if (config.env !== 'development') {
   app.use(morgan.successHandler);
   app.use(morgan.errorHandler);
 }
@@ -58,6 +58,7 @@ passport.use('jwt', jwtStrategy);
 app.use('/_healthz', (req, res, next) => {
   res.status(200).send({ ok: true });
 });
+
 app.use('/v1', routes);
 
 // send back a 404 error for any unknown api request

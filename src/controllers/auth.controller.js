@@ -1,29 +1,49 @@
 const httpStatus = require('http-status');
+const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { authService, userService, tokenService, emailService } = require('../services');
 const { AUTH_COOKIE, AUTH_COOKIE_REFRESH } = require('../config/constant');
-const config = require('../config/config')
+const config = require('../config/config');
+const logger = require('../config/logger');
+const { generateGoogleUserToken } = require('../services/token.service');
 
-const register = catchAsync(async (req, res) => {
-  const user = await userService.createUser(req.body);
-  const tokens = await tokenService.generateAuthTokens(user);
-  res.cookie(AUTH_COOKIE, tokens.access.token, {
+/**
+ * The function creates options for setting a cookie in JavaScript, including the expiration date,
+ * HTTP-only flag, secure flag, and same-site attribute.
+ * @param token - The `token` parameter is an object that contains information about the token,
+ * including its expiration date.
+ * @returns The function `createSetCookiOptions` returns an object with the following properties:
+ */
+const createSetCookiOptions = (token) => {
+  return {
     //domain: `.${config.domain}`,  //commented for public subdomain exceptions like netlify
-    expires: tokens.access.expires,
+    expires: token.expires,
     httpOnly: true,
 
     //need for chrome specific
     secure: config.env === 'production',
-    sameSite: config.env === 'production' ? 'None': 'Lax'
-  });
-  res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, {
-    //domain: `.${config.domain}`,
-    expires: tokens.refresh.expires,
-    httpOnly: true,
+    sameSite: config.env === 'production' ? 'none' : 'lax',
+  };
+};
 
+/**
+ * The function creates options for clearing cookies in a JavaScript application.
+ * @returns An object with the properties `httpOnly`, `secure`, and `sameSite`.
+ */
+const createClearCookiOptions = () => {
+  return {
+    //domain: `.${config.domain}`,
+    httpOnly: true,
     secure: config.env === 'production',
-    sameSite: config.env === 'production' ? 'None': 'Lax'
-  });
+    sameSite: config.env === 'production' ? 'none' : 'lax',
+  };
+};
+
+const register = catchAsync(async (req, res) => {
+  const user = await userService.createUser(req.body);
+  const tokens = await tokenService.generateAuthTokens(user);
+  res.cookie(AUTH_COOKIE, tokens.access.token, createSetCookiOptions(tokens.access.token));
+  res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, createSetCookiOptions(tokens.refresh.token));
   res.status(httpStatus.CREATED).send({ user, tokens });
 });
 
@@ -31,41 +51,16 @@ const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
   const user = await authService.loginUserWithEmailAndPassword(email, password);
   const tokens = await tokenService.generateAuthTokens(user);
-  res.cookie(AUTH_COOKIE, tokens.access.token, {
-    //domain: `.${config.domain}`,
-    expires: tokens.access.expires,
-    httpOnly: true,
-
-    secure: config.env === 'production',
-    sameSite: config.env === 'production' ? 'None': 'Lax'
-  });
-  res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, {
-    //domain: `.${config.domain}`,
-    expires: tokens.refresh.expires,
-    httpOnly: true,
-
-    secure: config.env === 'production',
-    sameSite: config.env === 'production' ? 'None': 'Lax'
-  });
-
+  res.cookie(AUTH_COOKIE, tokens.access.token, createSetCookiOptions(tokens.access.token));
+  res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, createSetCookiOptions(tokens.refresh.token));
   res.send({ user, tokens });
 });
 
 const logout = catchAsync(async (req, res) => {
   const refreshToken = req?.cookies[AUTH_COOKIE_REFRESH] || req.body.refreshToken;
   await authService.logout(refreshToken);
-  res.clearCookie(AUTH_COOKIE, {
-    //domain: `.${config.domain}`,
-    httpOnly: true,
-    secure: config.env === 'production',
-    sameSite: config.env === 'production' ? 'None': 'Lax'
-  });
-  res.clearCookie(AUTH_COOKIE_REFRESH, {
-    //domain: `.${config.domain}`,
-    httpOnly: true,
-    secure: config.env === 'production',
-    sameSite: config.env === 'production' ? 'None': 'Lax'
-  });
+  res.clearCookie(AUTH_COOKIE, createClearCookiOptions());
+  res.clearCookie(AUTH_COOKIE_REFRESH, createClearCookiOptions());
   res.status(httpStatus.NO_CONTENT).send();
 });
 
@@ -96,6 +91,21 @@ const verifyEmail = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const verifyGoogleOauth = catchAsync(async (req, res) => {
+  const code = req.query.code;
+  if (!code) throw new ApiError(httpStatus.BAD_REQUEST, 'Code Missing!');
+  try {
+    const { id_token, access_token } = await authService.getGoogleOauth(code);
+    const tokens = await generateGoogleUserToken(id_token, access_token);
+    res.cookie(AUTH_COOKIE, tokens.access.token, createSetCookiOptions(tokens.access.token));
+    res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, createSetCookiOptions(tokens.refresh.token));
+    res.redirect(`${config.domain}`);
+  } catch (error) {
+    logger.error('Failed to authorize google user!');
+    res.redirect(`${config.domain}oauth/error`);
+  }
+});
+
 module.exports = {
   register,
   login,
@@ -105,4 +115,5 @@ module.exports = {
   resetPassword,
   sendVerificationEmail,
   verifyEmail,
+  verifyGoogleOauth,
 };

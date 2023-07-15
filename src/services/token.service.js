@@ -113,6 +113,37 @@ const generateVerifyEmailToken = async (user) => {
   return verifyEmailToken;
 };
 
+/**
+ * The function generates a Google user token by decoding the id_token and access_token, creating a
+ * user object with the decoded information, finding and updating the user in the database, and
+ * generating authentication tokens for the user.
+ * @param id_token - The `id_token` parameter is a JSON Web Token (JWT) issued by Google after a user
+ * successfully authenticates with their Google account. It contains information about the user, such
+ * as their name, email, and whether their email has been verified.
+ * @param access_token - The `access_token` parameter is a token that is used to authenticate and
+ * authorize the user's access to Google APIs. It is obtained by the user during the authentication
+ * process with Google.
+ * @returns an object containing authentication tokens.
+ */
+const generateGoogleUserToken = async (id_token, access_token) => {
+  if (!id_token || !access_token) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Googele Id token or access token not found');
+  }
+  const googleUser = jwt.decode(id_token);
+  const user = {
+    name: googleUser.name,
+    email: googleUser.email,
+    isEmailVerified: googleUser.email_verified,
+    password: `${googleUser.email}${Date.now()}`, // creating randomPassword for now
+    role: 'user',
+    //TODO: add picture image link support for user and contacts
+    //picture: googleUser.picture,
+  };
+  const foundUser = await userService.findAndUpdateUserByEmail(user);
+  const tokens = await generateAuthTokens(foundUser);
+  return tokens;
+};
+
 module.exports = {
   generateToken,
   saveToken,
@@ -120,4 +151,5 @@ module.exports = {
   generateAuthTokens,
   generateResetPasswordToken,
   generateVerifyEmailToken,
+  generateGoogleUserToken,
 };
