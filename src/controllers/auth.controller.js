@@ -22,8 +22,7 @@ const createSetCookiOptions = (token) => {
 
     //need for chrome specific
     secure: config.env === 'production',
-    //sameSite: config.env === 'production' ? 'none' : 'lax',
-    sameSite: 'lax'
+    sameSite: config.env === 'production' ? 'none' : 'lax',
   };
 };
 
@@ -36,8 +35,7 @@ const createClearCookiOptions = () => {
     //domain: `.${config.domain}`,
     httpOnly: true,
     secure: config.env === 'production',
-    //sameSite: config.env === 'production' ? 'none' : 'lax',
-    sameSite: 'lax'
+    sameSite: config.env === 'production' ? 'none' : 'lax',
   };
 };
 
