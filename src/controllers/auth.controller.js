@@ -95,6 +95,7 @@ const verifyGoogleOauth = catchAsync(async (req, res) => {
   const code = req.query.code;
   if (!code) throw new ApiError(httpStatus.BAD_REQUEST, 'Code Missing!');
   try {
+    console.info('[LEGACY][verifyGoogleOauth] log code ::', code)
     const { id_token, access_token } = await authService.getGoogleOauth(code);
     const tokens = await generateGoogleUserToken(id_token, access_token);
     res.cookie(AUTH_COOKIE, tokens.access.token, createSetCookiOptions(tokens.access.token));
@@ -110,6 +111,7 @@ const verifyGoogleOauthForFit = catchAsync(async (req, res) => {
   const code = req.query.code;
   if (!code) throw new ApiError(httpStatus.BAD_REQUEST, 'Code Missing!');
   try {
+    console.info('[FIT][verifyGoogleOauthForFit] log code ::', code)
     const { id_token, access_token } = await authService.getGoogleOauthForFit(code);
     const tokens = await generateGoogleUserToken(id_token, access_token);
     res.cookie(AUTH_COOKIE, tokens.access.token, createSetCookiOptions(tokens.access.token));
