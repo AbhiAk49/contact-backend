@@ -26,9 +26,16 @@ const envVarsSchema = Joi.object()
     PLATFORM_DOMAIN: Joi.string()
       .default('localhost')
       .description('the domain of the website for which cookie needs to be set'),
-    OAUTH_G_CLIENT_ID: Joi.string().required().description('google oauth client id'),
-    OAUTH_G_CLIENT_SECRET: Joi.string().required().description('google oauth client secret'),
-    OAUTH_G_REDIRECT_URL: Joi.string().required().description('google oauth redirect url'),
+
+    //legacy contacts
+    OAUTH_G_CLIENT_ID: Joi.string().required().description('legacy: google oauth client id'),
+    OAUTH_G_CLIENT_SECRET: Joi.string().required().description('legacy: google oauth client secret'),
+    OAUTH_G_REDIRECT_URL: Joi.string().required().description('legacy: google oauth redirect url'),
+
+    //fit client
+    OAUTH_G_CLIENT_ID_F: Joi.string().required().description('fit: google oauth client id'),
+    OAUTH_G_CLIENT_SECRET_F: Joi.string().required().description('fit: google oauth client secret'),
+    OAUTH_G_REDIRECT_URL_F: Joi.string().required().description('fit: google oauth redirect url'),
   })
   .unknown();
 
@@ -74,6 +81,11 @@ module.exports = {
       clientId: envVars.OAUTH_G_CLIENT_ID,
       clientSecret: envVars.OAUTH_G_CLIENT_SECRET,
       redirectUrl: envVars.OAUTH_G_REDIRECT_URL,
+    },
+    fit: {
+      clientId: envVars.OAUTH_G_CLIENT_ID_F,
+      clientSecret: envVars.OAUTH_G_CLIENT_SECRET_F,
+      redirectUrl: envVars.OAUTH_G_REDIRECT_URL_F,
     },
   },
 };

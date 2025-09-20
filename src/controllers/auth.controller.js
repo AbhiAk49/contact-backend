@@ -106,6 +106,21 @@ const verifyGoogleOauth = catchAsync(async (req, res) => {
   }
 });
 
+const verifyGoogleOauthForFit = catchAsync(async (req, res) => {
+  const code = req.query.code;
+  if (!code) throw new ApiError(httpStatus.BAD_REQUEST, 'Code Missing!');
+  try {
+    const { id_token, access_token } = await authService.getGoogleOauthForFit(code);
+    const tokens = await generateGoogleUserToken(id_token, access_token);
+    res.cookie(AUTH_COOKIE, tokens.access.token, createSetCookiOptions(tokens.access.token));
+    res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, createSetCookiOptions(tokens.refresh.token));
+    res.redirect(`${config.domain}`);
+  } catch (error) {
+    logger.error('Failed to authorize google user!');
+    res.redirect(`${config.domain}oauth/error`);
+  }
+});
+
 module.exports = {
   register,
   login,
@@ -116,4 +131,5 @@ module.exports = {
   sendVerificationEmail,
   verifyEmail,
   verifyGoogleOauth,
+  verifyGoogleOauthForFit
 };

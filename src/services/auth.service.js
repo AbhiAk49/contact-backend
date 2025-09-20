@@ -99,7 +99,33 @@ const verifyEmail = async (verifyEmailToken) => {
  * OAuth 2.0 Services
  */
 
+//legacy-contacts
+
 const getGoogleOauth = async (code) => {
+  if (!code) throw new ApiError(httpStatus.BAD_REQUEST, 'Code Missing!');
+  const payload = {
+    code,
+    client_id: config.oauth.google.clientId,
+    client_secret: config.oauth.google.clientSecret,
+    redirect_uri: config.oauth.google.redirectUrl,
+    grant_type: 'authorization_code',
+  };
+  try {
+    const response = await axios.post(OAUTH_GOOGLE_TOKEN_URL, qs.stringify(payload), {
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    logger.error('Failed to fetch google oauth token:');
+    throw new Error(error.message);
+  }
+};
+
+//fit client
+
+const getGoogleOauthForFit = async (code) => {
   if (!code) throw new ApiError(httpStatus.BAD_REQUEST, 'Code Missing!');
   const payload = {
     code,
@@ -128,4 +154,5 @@ module.exports = {
   resetPassword,
   verifyEmail,
   getGoogleOauth,
+  getGoogleOauthForFit
 };
