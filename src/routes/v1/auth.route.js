@@ -16,7 +16,7 @@ router.post('/send-verification-email', auth(), authController.sendVerificationE
 router.post('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);
 //OAUTH routes
 router.get('/oauth/google', /*validate(authValidation.oauthValidation), */ authController.verifyGoogleOauth);
-router.get('/oauth/google/fit', /*validate(authValidation.oauthValidation), */ authController.verifyGoogleOauthForFit);
+router.get('/oauth/googlefit', /*validate(authValidation.oauthValidation), */ authController.verifyGoogleOauthForFit);
 
 module.exports = router;
 
