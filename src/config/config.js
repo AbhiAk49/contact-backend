@@ -23,6 +23,7 @@ const envVarsSchema = Joi.object()
     SMTP_USERNAME: Joi.string().description('username for email server'),
     SMTP_PASSWORD: Joi.string().description('password for email server'),
     EMAIL_FROM: Joi.string().description('the from field in the emails sent by the app'),
+    //legacy contact platform
     PLATFORM_DOMAIN: Joi.string()
       .default('localhost')
       .description('the domain of the website for which cookie needs to be set'),
@@ -36,6 +37,11 @@ const envVarsSchema = Joi.object()
     OAUTH_G_CLIENT_ID_F: Joi.string().required().description('fit: google oauth client id'),
     OAUTH_G_CLIENT_SECRET_F: Joi.string().required().description('fit: google oauth client secret'),
     OAUTH_G_REDIRECT_URL_F: Joi.string().required().description('fit: google oauth redirect url'),
+
+    //fit platform
+    PLATFORM_DOMAIN_F: Joi.string()
+    .default('localhost')
+    .description('the domain of the website for which cookie needs to be set'),
   })
   .unknown();
 
@@ -76,6 +82,7 @@ module.exports = {
     from: envVars.EMAIL_FROM,
   },
   domain: envVars.PLATFORM_DOMAIN,
+  domain_fit: envVars.PLATFORM_DOMAIN_F,
   oauth: {
     google: {
       clientId: envVars.OAUTH_G_CLIENT_ID,
