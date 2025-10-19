@@ -4,7 +4,7 @@ const userService = require('./user.service');
 const Token = require('../models/token.model');
 const ApiError = require('../utils/ApiError');
 const { tokenTypes } = require('../config/tokens');
-const { OAUTH_GOOGLE_TOKEN_URL } = require('../config/constant');
+const { OAUTH_GOOGLE_TOKEN_URL,  OAUTH_GOOGLE_TOKEN_URL_F } = require('../config/constant');
 const config = require('../config/config');
 const axios = require('axios');
 const qs = require('qs');
@@ -135,7 +135,7 @@ const getGoogleOauthForFit = async (code) => {
     grant_type: 'authorization_code',
   };
   try {
-    const response = await axios.post(OAUTH_GOOGLE_TOKEN_URL, qs.stringify(payload), {
+    const response = await axios.post(OAUTH_GOOGLE_TOKEN_URL_F, qs.stringify(payload), {
       headers: {
         'Content-type': 'application/x-www-form-urlencoded',
       },

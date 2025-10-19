@@ -2,7 +2,7 @@ const httpStatus = require('http-status');
 const ApiError = require('../utils/ApiError');
 const catchAsync = require('../utils/catchAsync');
 const { authService, userService, tokenService, emailService } = require('../services');
-const { AUTH_COOKIE, AUTH_COOKIE_REFRESH } = require('../config/constant');
+const { AUTH_COOKIE, AUTH_COOKIE_F, AUTH_COOKIE_REFRESH, AUTH_COOKIE_REFRESH_F } = require('../config/constant');
 const config = require('../config/config');
 const logger = require('../config/logger');
 const { generateGoogleUserToken } = require('../services/token.service');
@@ -64,6 +64,14 @@ const logout = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const logoutFit = catchAsync(async (req, res) => {
+  const refreshToken = req?.cookies[AUTH_COOKIE_REFRESH_F] || req.body.refreshToken;
+  await authService.logout(refreshToken);
+  res.clearCookie(AUTH_COOKIE_F, createClearCookiOptions());
+  res.clearCookie(AUTH_COOKIE_REFRESH_F, createClearCookiOptions());
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
 const refreshTokens = catchAsync(async (req, res) => {
   const tokens = await authService.refreshAuth(req.body.refreshToken);
   res.send({ ...tokens });
@@ -114,8 +122,8 @@ const verifyGoogleOauthForFit = catchAsync(async (req, res) => {
     console.info('[FIT][verifyGoogleOauthForFit] log code ::', code)
     const { id_token, access_token } = await authService.getGoogleOauthForFit(code);
     const tokens = await generateGoogleUserToken(id_token, access_token);
-    res.cookie(AUTH_COOKIE, tokens.access.token, createSetCookiOptions(tokens.access.token));
-    res.cookie(AUTH_COOKIE_REFRESH, tokens.refresh.token, createSetCookiOptions(tokens.refresh.token));
+    res.cookie(AUTH_COOKIE_F, tokens.access.token, createSetCookiOptions(tokens.access.token));
+    res.cookie(AUTH_COOKIE_REFRESH_F, tokens.refresh.token, createSetCookiOptions(tokens.refresh.token));
     res.redirect(`${config.domain_fit}`);
   } catch (error) {
     logger.error('Failed to authorize google user!');
@@ -133,5 +141,6 @@ module.exports = {
   sendVerificationEmail,
   verifyEmail,
   verifyGoogleOauth,
-  verifyGoogleOauthForFit
+  verifyGoogleOauthForFit,
+  logoutFit
 };
