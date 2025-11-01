@@ -4,7 +4,7 @@ const config = require('../config/config');
 const whitelist = [
   /manage-my-contact-service/,
   /manage-my-contacts/,
-  /localhost/,
+  /track-fit-n-analyze/,
   /**
    * white listing domains here
    */
