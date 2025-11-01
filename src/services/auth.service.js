@@ -129,9 +129,9 @@ const getGoogleOauthForFit = async (code) => {
   if (!code) throw new ApiError(httpStatus.BAD_REQUEST, 'Code Missing!');
   const payload = {
     code,
-    client_id: config.oauth.google.clientId,
-    client_secret: config.oauth.google.clientSecret,
-    redirect_uri: config.oauth.google.redirectUrl,
+    client_id: config.oauth.fit.clientId,
+    client_secret: config.oauth.fit.clientSecret,
+    redirect_uri: config.oauth.fit.redirectUrl,
     grant_type: 'authorization_code',
   };
   try {
@@ -142,7 +142,7 @@ const getGoogleOauthForFit = async (code) => {
     });
     return response.data;
   } catch (error) {
-    logger.error('Failed to fetch google oauth token:');
+    logger.error('[getGoogleOauthForFit] Failed to fetch google oauth token:', error);
     throw new Error(error.message);
   }
 };

@@ -126,7 +126,7 @@ const verifyGoogleOauthForFit = catchAsync(async (req, res) => {
     res.cookie(AUTH_COOKIE_REFRESH_F, tokens.refresh.token, createSetCookiOptions(tokens.refresh.token));
     res.redirect(`${config.domain_fit}`);
   } catch (error) {
-    logger.error('Failed to authorize google user!');
+    logger.error('[FIT][verifyGoogleOauthForFit] Failed to authorize google user!', error);
     res.redirect(`${config.domain_fit}oauth/error`);
   }
 });

@@ -19,7 +19,8 @@ router.get('/oauth/google', /*validate(authValidation.oauthValidation), */ authC
 
 
 router.get('/oauth/googlefit', /*validate(authValidation.oauthValidation), */ authController.verifyGoogleOauthForFit);
-router.post('/oauth/logoutfit', validate(authValidation.logout), authController.logoutFit);
+
+router.post('/logout-fit', validate(authValidation.logout), authController.logoutFit);
 
 
 
